@@ -4,7 +4,7 @@ import Conversation from "../../components/chatMenu/Conversation";
 import Messages from "../../components/chatBox/Messages";
 import ChatOnline from "../../components/chatOnline/ChatOnline";
 import axios from "axios";
-import { ClockLoader } from "react-spinners";
+import { ClockLoader,RiseLoader } from "react-spinners";
 import { io } from "socket.io-client";
 import { CloudOff } from "@material-ui/icons";
 import Header from "../../components/header/index";
@@ -89,17 +89,17 @@ function Messenger({user}) {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get(
-          `/api1/getConversation/${user._id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          }
-        );
+        setLoading(true); // Start loading
+        const res = await axios.get(`/api1/getConversation/${user._id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
         setConversations(res.data);
       } catch (err) {
         console.log({ err });
+      } finally {
+        setLoading(false); // Stop loading
       }
     };
     getData();
@@ -226,22 +226,26 @@ function Messenger({user}) {
       <div className="messenger">
         <div className="chatMenu">
           <div className="chatMenuWrapper">
-            <input
+            {/* <input
               type="text"
               placeholder="search for the friends"
               className="chatMenu_Input"
-            />
+            /> */}
+            
             <div className="chatMenu_Top">
-              {conversations.map((c) => (
-                <div onClick={() => setCurrentChat(c)}>
-                  <Conversation
-                    key={c._id}
-                    conversation={c}
-                    currentUser={user}
-                    online={online}
-                  />
-                </div>
-              ))}
+            {loading ? ( // Conditionally render loading spinner
+            <RiseLoader color="#36d7b7" />              ) : (
+                conversations.map((c) => (
+                  <div onClick={() => setCurrentChat(c)}>
+                    <Conversation
+                      key={c._id}
+                      conversation={c}
+                      currentUser={user}
+                      online={online}
+                    />
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
