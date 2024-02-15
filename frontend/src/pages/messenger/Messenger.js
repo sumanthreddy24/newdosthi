@@ -6,7 +6,7 @@ import ChatOnline from "../../components/chatOnline/ChatOnline";
 import axios from "axios";
 import { ClockLoader,RiseLoader } from "react-spinners";
 import { io } from "socket.io-client";
-import { CloudOff } from "@material-ui/icons";
+import { CloudOff, FlashOnRounded } from "@material-ui/icons";
 import Header from "../../components/header/index";
 
 function Messenger({user}) {
@@ -19,6 +19,7 @@ function Messenger({user}) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
+  const[loading2,setLoading2] = useState(false)
   const [arrivalMessages, setArrivalMessages] = useState(null);
   const [chatOnline, setChatOnline] = useState(null);
   const [online, setOnline] = useState(null);
@@ -30,7 +31,7 @@ function Messenger({user}) {
     // error close
 
 
-    socket.current = io("http://localhost:8000");
+    socket.current = io("http://192.168.30.79:8000");
   //   socket.current = io({
   //     protocols: ["http"],
   // });
@@ -153,7 +154,7 @@ function Messenger({user}) {
     socket.current.emit("sendMessage", datas);
 
     try {
-      setLoading(true);
+      setLoading2(true);
       setText("");
       const res =await axios.post(
                 `/api1/newMessage/`,inputs,
@@ -168,7 +169,7 @@ function Messenger({user}) {
     } catch (err) {
       console.log(err);
     } finally {
-      setLoading(false);
+      setLoading2(false);
     }
   };
 
@@ -234,7 +235,7 @@ function Messenger({user}) {
             
             <div className="chatMenu_Top">
             {loading ? ( // Conditionally render loading spinner
-            <RiseLoader color="#36d7b7" />              ) : (
+               <RiseLoader color="#36d7b7" /> ) : (
                 conversations.map((c) => (
                   <div onClick={() => setCurrentChat(c)}>
                     <Conversation
@@ -308,7 +309,7 @@ function Messenger({user}) {
                     cols="20"
                     rows="2"
                   ></textarea>
-                  {loading ? <ClockLoader color="#36d7b7" size={30} /> : null}
+                  {loading2 ? <ClockLoader color="#36d7b7" size={30} /> : null}
                   <button className="button1" onClick={handleSendMessage}>
                     send
                   </button>
